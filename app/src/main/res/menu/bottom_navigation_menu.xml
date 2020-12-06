@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    >
+    <item
+        android:id="@+id/create"
+        android:enabled="true"
+        android:icon="@drawable/ic_newuser"
+        android:title="@string/register"/>
+<!--    <item-->
+<!--        android:id="@+id/recover"-->
+<!--        android:enabled="true"-->
+<!--        android:icon="@drawable/ic_restore"-->
+<!--        android:title="@string/recover"/>-->
+</menu>

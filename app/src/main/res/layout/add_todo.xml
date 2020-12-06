@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/loginPageBackgroundColor"
+
+    tools:context=".fragments.AddTodoFragment">
+
+    <LinearLayout
+        android:id="@+id/addTodo_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:paddingTop="16dp">
+
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:gravity="center"
+
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="cursive"
+            android:text="@string/app_name"
+            android:textStyle="bold"
+            android:textSize="35dp" />
+
+        <ImageView
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:scaleType="fitXY"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription=" "
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            app:srcCompat="@drawable/ic_newuser"
+            tools:ignore="VectorDrawableCompat" />
+
+        <TextView
+            android:layout_width="217dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:fontFamily="cursive"
+            android:gravity="center"
+            android:text="@string/register"
+            android:textSize="35dp"
+            android:textStyle="bold" />
+
+        <!-- Snippet from "Add text fields" section goes here. -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:hint="@string/uname">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/username_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_text_input"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:hint="@string/pass"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Snippet from "Add buttons" section goes here. -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:id="@+id/chk_savepass"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:buttonTint="@color/colorPrimary"
+                android:checked="true"
+                android:text="@string/save_pass" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/createUser_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="@string/register" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_toStartOf="@id/createUser_button"
+                android:layout_toLeftOf="@id/createUser_button"
+                android:text="@string/cancel" />
+
+        </RelativeLayout>
+
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:padding="10dp" />
+
+
+    </LinearLayout>
+</ScrollView>
