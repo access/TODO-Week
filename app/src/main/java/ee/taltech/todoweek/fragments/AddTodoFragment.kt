@@ -56,6 +56,7 @@ class AddTodoFragment : Fragment() {
 
         if (arguments != null) {
             val user = arguments?.get("user")!! as UserModel
+            currentUser= user
             topBar.title = "${user.username} ${getResources().getString(R.string.todo_addtodo)}"
             // time listener
 
@@ -116,6 +117,9 @@ class AddTodoFragment : Fragment() {
                 Toast.makeText(context, getResources().getString(R.string.todo_error_save), Toast.LENGTH_LONG).show()
             }
         }
+        btn_manageCategories.setOnClickListener {
+            gotoCategories(currentUser)
+        }
         val c = arrayOf("Belgium", "France", "Italy", "Germany", "Spain")
 //        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
 //            requireContext(), R.layout.add_todo, c
@@ -142,6 +146,13 @@ class AddTodoFragment : Fragment() {
         bundle.putParcelable("user", user)
         weekFrag.arguments = bundle
         navigateTo(weekFrag, true)
+    }
+    private fun gotoCategories(user: UserModel) {
+        val reqFragment = CategoriesFragment()
+        val bundle = Bundle()
+        bundle.putParcelable("user", user)
+        reqFragment.arguments = bundle
+        navigateTo(reqFragment, true)
     }
 
     private fun navigateTo(fragment: Fragment, addToBackstack: Boolean) {

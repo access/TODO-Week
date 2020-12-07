@@ -3,9 +3,10 @@ package ee.taltech.todoweek.database.weekTaskList
 import android.content.Context
 import androidx.room.*
 
-@Database(entities = [Todo::class], version = 1, exportSchema = false)
+@Database(entities = [Todo::class, TodoCategory::class], version = 1, exportSchema = false)
 abstract class TodoDatabase : RoomDatabase() {
     abstract fun todoDao(): TodoDao
+    abstract fun todoCategoryDao(): TodoCategoryDao
 
     companion object {
         @Volatile
@@ -15,7 +16,7 @@ abstract class TodoDatabase : RoomDatabase() {
             if (tempInstance != null) return tempInstance
             synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    context.applicationContext, TodoDatabase::class.java, "TODO-5.db"
+                    context.applicationContext, TodoDatabase::class.java, "TODO-6.db"
                 ).allowMainThreadQueries().build()
                 INSTANCE = instance
                 return instance

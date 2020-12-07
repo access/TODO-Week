@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/loginPageBackgroundColor"
+
+    tools:context=".fragments.CategoryFragment">
+
+    <LinearLayout
+        android:id="@+id/auth_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:paddingTop="16dp">
+
+        <TextView
+            android:layout_width="217dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:fontFamily="cursive"
+            android:gravity="center"
+            android:text="@string/todo_category"
+            android:textSize="35dp"
+            android:textStyle="bold" />
+
+        <!-- Snippet from "Add text fields" section goes here. -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:hint="@string/todo_category_name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_category_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <!-- Snippet from "Add buttons" section goes here. -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="@string/todo_category_save" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_toStartOf="@id/createUser_button"
+                android:layout_toLeftOf="@id/createUser_button"
+                android:text="@string/cancel" />
+
+        </RelativeLayout>
+
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:padding="10dp" />
+
+
+    </LinearLayout>
+</ScrollView>
