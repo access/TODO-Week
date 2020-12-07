@@ -54,10 +54,22 @@ class SettingsDBHelper(context: Fragment) : SQLiteOpenHelper(context.requireCont
 
         // Insert the new row, returning the primary key value of the new row
         val updateRowID =
-            db.update(DBSettingsContract.SettingsEntry.TABLE_NAME, values, DBSettingsContract.SettingsEntry.SETTINGS_ID + " = 1",null)
-     //   Log.e("saveLastUsername: ", "newRowId: $updateRowID")
+            db.update(DBSettingsContract.SettingsEntry.TABLE_NAME, values, DBSettingsContract.SettingsEntry.SETTINGS_ID + " = 1", null)
+ //       Log.e("updateRowID: ", "updateRowID_1: $updateRowID")
+
+        if (updateRowID == 0) {
+            db.insert(DBSettingsContract.SettingsEntry.TABLE_NAME, null, values)
+        }
+//        Log.e("updateRowID: ", "updateRowID_2: $updateRowID")
+//        var r = db.rawQuery("select * from ${DBSettingsContract.SettingsEntry.TABLE_NAME}", null)
+//        if (r != null && r.count > 0) while (!r.isAfterLast) {
+//            val i = r.getColumnIndex(DBSettingsContract.SettingsEntry.SETTINGS_ID)
+//            Log.e("i: ", i.toString())
+//            val p = r.getInt(i).toString()
+//            Log.e("settings: ", p)
+//        }
 //        val updateRowID = db.update(DBSettingsContract.SettingsEntry.TABLE_NAME, null,values )
-       // db.execSQL(SQL_DELETE_ENTRIES)
+        // db.execSQL(SQL_DELETE_ENTRIES)
         return updateRowID == 1
     }
 
@@ -118,23 +130,26 @@ class SettingsDBHelper(context: Fragment) : SQLiteOpenHelper(context.requireCont
         val db = writableDatabase
         var cursor: Cursor? = null
         try {
-            cursor = db.rawQuery("select * from " + DBSettingsContract.SettingsEntry.TABLE_NAME+" WHERE "+DBSettingsContract.SettingsEntry.SETTINGS_ID+" = 1", null)
+            cursor = db.rawQuery(
+                "select * from " + DBSettingsContract.SettingsEntry.TABLE_NAME + " WHERE " + DBSettingsContract.SettingsEntry.SETTINGS_ID + " = 1",
+                null
+            )
         } catch (e: SQLiteException) {
             db.execSQL(SQL_CREATE_ENTRIES)
             db.execSQL(SQL_SET_DEFAULTS)
             //return settings
             //Log.e("SQLiteExceptionzzz::: ", e.message.toString())
         }
- //       Log.e("cursor::: ", cursor?.count.toString())
+        //       Log.e("cursor::: ", cursor?.count.toString())
 
- //       db.execSQL(SQL_DELETE_ENTRIES)
+        //       db.execSQL(SQL_DELETE_ENTRIES)
 //        db.execSQL(SQL_CREATE_ENTRIES)
 
         var lastUsername: String
-        if (cursor!=null && cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             //while (!cursor.isAfterLast) {
             lastUsername = cursor.getString(cursor.getColumnIndex(DBSettingsContract.SettingsEntry.COLUMN_LAST_USERNAME))
-     //       Log.e("LUN::: ", lastUsername)
+            //       Log.e("LUN::: ", lastUsername)
             settings = SettingsModel(lastUsername)
             //cursor.moveToNext()
             //}

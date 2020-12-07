@@ -21,12 +21,10 @@ class MainActivity : AppCompatActivity(), NavigationHost {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val actionBar: ActionBar? = supportActionBar
-        var first_run: Boolean = false
         actionBar?.hide()
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().add(R.id.container, AuthFragment()).commit()
-            first_run = true
             navigateTo(AuthFragment(), true)
             val db = getDatabase(this)
             //Log.e("db: ", "created: ${db.toString()}")

@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import ee.taltech.todoweek.NavigationHost
 import ee.taltech.todoweek.R
 import ee.taltech.todoweek.database.settings.SettingsDBHelper
 import ee.taltech.todoweek.database.user.UserModel
@@ -20,15 +19,22 @@ import kotlin.system.exitProcess
 
 class AuthFragment : Fragment() {
     lateinit var userDB: UsersDB
+    lateinit var settingsDB: SettingsDBHelper
     lateinit var currentUser: UserModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        var settingsDB = SettingsDBHelper(this)
+        settingsDB = SettingsDBHelper(this)
         userDB = UsersDB(this)
 
         val view = inflater.inflate(R.layout.auth, container, false)
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         view.findViewById<MaterialButton>(R.id.login_button).setOnClickListener {
             var uname = view.findViewById<TextInputEditText>(R.id.username_edit_text).text.toString()
             var pass = view.findViewById<TextInputEditText>(R.id.password_edit_text).text.toString()
@@ -61,23 +67,19 @@ class AuthFragment : Fragment() {
         // last loaded user - if saved pass load week tasks
         val isExistsUser = userDB.isUsernameExists(settingsDB.getLastUsername().lastusername)
         if (isExistsUser) {
-            val tmpUser = userDB.readUser(settingsDB.getLastUsername().lastusername)
-            if (tmpUser.uid >= 0) {
-                currentUser = tmpUser
-                if (tmpUser.isSavedPassword > 0) {
+            val lastUser = userDB.readUser(settingsDB.getLastUsername().lastusername)
+            if (lastUser.uid >= 0) {
+                currentUser = lastUser
+                if (lastUser.isSavedPassword > 0) {
                     val usernameInput = view.findViewById<TextInputEditText>(R.id.username_edit_text)
                     val passwordInput = view.findViewById<TextInputEditText>(R.id.password_edit_text)
                     usernameInput.setText(currentUser.username)
                     passwordInput.setText(currentUser.password)
- //                   gotoWeekTasks(currentUser)
+                    //                   gotoWeekTasks(currentUser)
                 }
             }
         }
-        return view
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun isLoginDataValid(username: String, password: String, checkedSavePass: Int): Boolean {
@@ -105,7 +107,7 @@ class AuthFragment : Fragment() {
         navigateTo(weekFrag, true)
     }
 
-     private fun navigateTo(fragment: Fragment, addToBackstack: Boolean) {
+    private fun navigateTo(fragment: Fragment, addToBackstack: Boolean) {
         val transaction = fragmentManager?.beginTransaction()?.replace(R.id.container, fragment)
         if (addToBackstack) {
             transaction?.addToBackStack(null)

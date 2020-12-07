@@ -15,5 +15,17 @@
     <string name="reg_complete">Registration complete successfully.</string>
     <string name="error_login">Incorrect login data. Please check the username and password.</string>
     <string name="week_tasks"> | Tasks 7 days</string>
-
+    <string name="todo_addtodo"> | Add ToDo</string>
+    <string name="todo_save">Save</string>
+    <string name="todo_cancel">Cancel</string>
+    <string name="todo_category">Category</string>
+    <string name="todo_title">Title</string>
+    <string name="todo_select_time">Select time</string>
+    <string name="todo_select_date">Select date</string>
+    <string name="todo_select_priority">Select priority: [0-100]</string>
+    <string name="todo_select_category">Select category</string>
+    <string name="todo_error_save">Incorrect data. Check all fields before save.</string>
+    <string name="todo_select_message">Enter your ToDo message.</string>
+    <string name="todo_business_message">//TODO...</string>
+    <string name="todo_manage_categories">Categories</string>
 </resources>
