@@ -1,21 +1,33 @@
 package ee.taltech.todoweek.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import com.google.android.material.textfield.TextInputEditText
+import androidx.fragment.app.FragmentTransaction
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ee.taltech.todoweek.R
 import ee.taltech.todoweek.database.settings.SettingsDBHelper
 import ee.taltech.todoweek.database.user.UserModel
 import ee.taltech.todoweek.database.user.UsersDB
+import ee.taltech.todoweek.database.weekTaskList.TodoCategory
+import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
+import ee.taltech.todoweek.model.CategoriesAdapter
+import ee.taltech.todoweek.model.CellClickListener
+import kotlinx.android.synthetic.main.add_todo.*
 import kotlinx.android.synthetic.main.add_todo.topBar
 import kotlinx.android.synthetic.main.categories_fragment.*
+import kotlinx.android.synthetic.main.categories_fragment.view.*
 
 
-class CategoriesFragment : Fragment() {
+class CategoriesFragment : CellClickListener, Fragment() {
     lateinit var userDB: UsersDB
     lateinit var currentUser: UserModel
     lateinit var settingsDB: SettingsDBHelper
@@ -35,17 +47,76 @@ class CategoriesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val db = TodoDatabase.getDatabase(requireContext())
+        //Log.e("db: ", "created: ${db.toString()}")
+        val dao = db.todoCategoryDao()
 
         if (arguments != null) {
             val user = arguments?.get("user")!! as UserModel
-            currentUser=user
+            currentUser = user
             topBar.title = "${user.username} ${getResources().getString(R.string.todo_categories_title)}"
         }
-        val btnAddCategory = view.findViewById<ExtendedFloatingActionButton>(R.id.btn_add_category)
+        val btnAddCategory = view.findViewById<FloatingActionButton>(R.id.btn_add_category)
 
         btnAddCategory.setOnClickListener {
             gotoCategory(currentUser)
         }
+        // fill categories recyclerview
+        val cats = dao.loadCategories(currentUser.uid).toMutableList()
+        val tmpContext = this
+
+        recyclerView.apply {
+            setHasFixedSize(true)
+            adapter = CategoriesAdapter(cats, tmpContext)
+            layoutManager = LinearLayoutManager(this.context)
+            addItemDecoration(
+                DividerItemDecoration(
+                    this.context, DividerItemDecoration.VERTICAL
+                )
+            )
+        }
+        val btnBack = view.findViewById<MaterialButton>(R.id.btn_back)
+        btnBack.setOnClickListener {
+            activity?.onBackPressed()
+        }
+//        val btnDeleteCategory = view.findViewById<MaterialButton>(R.id.btn_delete_category)
+//        btnDeleteCategory?.setOnClickListener {
+//            val category = it.getTag(0) as TodoCategory
+//            if (category != null) {
+//                MaterialAlertDialogBuilder(requireContext()).setTitle("${resources.getString(R.string.delete)} - ${category.name}")
+//                    .setMessage(R.string.todo_delete_confirm).setNeutralButton(R.string.cancel) { dialog, which ->
+//                        // Respond to neutral button press
+//                    }
+////                .setNegativeButton(resources.getString(R.string.decline)) { dialog, which ->
+////                    // Respond to negative button press
+////                }
+//                    .setPositiveButton(R.string.delete) { dialog, which ->
+//                        // Respond to positive button press
+//                        dao.deleteCategory(category)
+//                        reloadCurrentFragment()
+//                        Toast.makeText(context, getResources().getString(R.string.todo_category_deleted), Toast.LENGTH_LONG).show()
+//                    }.show()
+//            }
+//        }
+
+//        btnDeleteCategory?.setOnClickListener {
+//            val category = it.getTag(0) as TodoCategory
+//            if (category != null) {
+//                dao.deleteCategory(category)
+//                Log.e("addCategory: ", "added: $category")
+//                val all = dao.loadCategories(currentUser.uid)
+//                for (el in all) {
+//                    Log.e("category: ", "val: ${el.toString()}")
+//                }
+//                Toast.makeText(context, getResources().getString(R.string.todo_category_deleted), Toast.LENGTH_LONG).show()
+//                reloadCurrentFragment()
+//            }
+//        }
+    }
+
+    private fun reloadCurrentFragment() {
+        val transaction = fragmentManager?.beginTransaction()?.replace(R.id.container, this)
+        transaction?.commit()
     }
 
     private fun closeThisFragment() {
@@ -66,5 +137,9 @@ class CategoriesFragment : Fragment() {
             transaction?.addToBackStack(null)
         }
         transaction?.commit()
+    }
+
+    override fun onCellClickListener(position: Int, category: TodoCategory) {
+        //
     }
 }

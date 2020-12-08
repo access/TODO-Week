@@ -12,12 +12,14 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import ee.taltech.todoweek.R
 import ee.taltech.todoweek.database.settings.SettingsDBHelper
 import ee.taltech.todoweek.database.user.UserModel
 import ee.taltech.todoweek.database.user.UsersDB
+import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
 import kotlinx.android.synthetic.main.add_todo.*
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -56,8 +58,8 @@ class AddTodoFragment : Fragment() {
 
         if (arguments != null) {
             val user = arguments?.get("user")!! as UserModel
-            currentUser= user
-            topBar.title = "${user.username} ${getResources().getString(R.string.todo_addtodo)}"
+            currentUser = user
+            topBar.title = "${user.username} ${resources.getString(R.string.todo_addtodo)}"
             // time listener
 
             btn_time.setOnClickListener {
@@ -120,17 +122,29 @@ class AddTodoFragment : Fragment() {
         btn_manageCategories.setOnClickListener {
             gotoCategories(currentUser)
         }
-        val c = arrayOf("Belgium", "France", "Italy", "Germany", "Spain")
-//        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
-//            requireContext(), R.layout.add_todo, c
-//        )
-        val adapter = ArrayAdapter(requireContext(), R.layout.textview_item_categories, c)
+        // load drop-down list of categories
+        val db = TodoDatabase.getDatabase(requireContext())
+        val dao = db.todoCategoryDao()
+        var categoryList = dao.loadCategories(currentUser.uid).toMutableList()
+        for (item in categoryList) {
+            Log.e("category: ", "$item")
+        }
+        val categoryAdapter = ArrayAdapter(requireContext(), R.layout.textview_item_categories, categoryList)
+        val txtCategory = view.findViewById<TextInputEditText>(R.id.txt_category_name)
+//        val category = TodoCategory(0, currentUser.uid,txtCategory.text.toString())
+//        dao.addCategory(category)
+//        Log.e("addCategory: ", "added: $category")
 
-        val textView = view.findViewById<AutoCompleteTextView>(R.id.category_list)
-        textView.threshold = 1
-        textView.setAdapter(adapter)
-        textView.setOnItemClickListener { parent, view, position, id ->
-            Log.e("catId: ", "id:$id position:$position text:${textView.text}")
+
+        // val adapter = ArrayAdapter(requireContext(), R.layout.textview_item_categories, c)
+
+        val catListInput = view.findViewById<AutoCompleteTextView>(R.id.category_list)
+        //textView.threshold = 0
+        catListInput.setAdapter(categoryAdapter)
+        catListInput.setOnItemClickListener { parent, view, position, id ->
+
+            Log.e("catId: ", "id:$id position:$position text:${catListInput.text}")
+            categoryList = dao.loadCategories(currentUser.uid).toMutableList(); categoryAdapter.notifyDataSetChanged()
 
         }
 
@@ -147,6 +161,7 @@ class AddTodoFragment : Fragment() {
         weekFrag.arguments = bundle
         navigateTo(weekFrag, true)
     }
+
     private fun gotoCategories(user: UserModel) {
         val reqFragment = CategoriesFragment()
         val bundle = Bundle()

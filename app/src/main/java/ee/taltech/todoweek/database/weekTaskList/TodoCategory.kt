@@ -9,6 +9,6 @@ data class TodoCategory(
     @ColumnInfo(name = "name") val name: String,
 ) {
     override fun toString(): String {
-        return "id:$id uid:$uid name:$name"
+        return "$name" //"id:$id uid:$uid name:$name"
     }
 }

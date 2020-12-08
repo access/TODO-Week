@@ -75,7 +75,7 @@ class AuthFragment : Fragment() {
                     val passwordInput = view.findViewById<TextInputEditText>(R.id.password_edit_text)
                     usernameInput.setText(currentUser.username)
                     passwordInput.setText(currentUser.password)
-                    //                   gotoWeekTasks(currentUser)
+                                       gotoWeekTasks(currentUser)
                 }
             }
         }

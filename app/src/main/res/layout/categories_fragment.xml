@@ -28,29 +28,44 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <!-- Note: A RecyclerView can also be used -->
-        <androidx.core.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <!-- Scrollable content -->
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </androidx.core.widget.NestedScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            tools:listitem="@layout/item_category_layout">
 
+        </androidx.recyclerview.widget.RecyclerView>
+        </androidx.core.widget.NestedScrollView>
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
-            />
+            >
+
+        </com.google.android.material.bottomappbar.BottomAppBar>
         <!--        app:navigationIcon="@drawable/ic_menu_24dp"-->
         <!--        app:menu="@menu/bottom_app_bar"-->
-
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_margin="5dp"
+            android:backgroundTint="@color/colorAccent"
+            android:text="@string/todo_back_to_todo"
+            app:icon="@drawable/ic_back" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_add_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

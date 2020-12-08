@@ -68,8 +68,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
                 android:layout_marginRight="12dp"
-                android:layout_toStartOf="@id/createUser_button"
-                android:layout_toLeftOf="@id/createUser_button"
                 android:text="@string/cancel" />
 
         </RelativeLayout>
