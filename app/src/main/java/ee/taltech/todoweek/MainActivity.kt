@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity(), NavigationHost {
             val db = getDatabase(this)
             //Log.e("db: ", "created: ${db.toString()}")
             val dao = db.todoDao()
-            val t = Todo(0, 1,0, System.currentTimeMillis(), System.currentTimeMillis(),"hello",true)
+            val t = Todo(0, 1,0,0.0, System.currentTimeMillis(), System.currentTimeMillis(),"hello",true)
             dao.insert(t)
             Log.e("db: ", "added: ${dao.toString()}")
             val all = dao.getAll()

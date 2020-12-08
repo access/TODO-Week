@@ -12,18 +12,19 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import ee.taltech.todoweek.R
 import ee.taltech.todoweek.database.settings.SettingsDBHelper
 import ee.taltech.todoweek.database.user.UserModel
 import ee.taltech.todoweek.database.user.UsersDB
+import ee.taltech.todoweek.database.weekTaskList.Todo
 import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
 import kotlinx.android.synthetic.main.add_todo.*
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.HashMap
 
 
 class AddTodoFragment : Fragment() {
@@ -52,9 +53,9 @@ class AddTodoFragment : Fragment() {
         var month: Int = -1
         var day: Int = -1
         var categoryId: Int = -1
-        var todoPriority: Int = -1
+        var todoPriority: Double = -1.0
         var todoMessage: String = ""
-
+        var actionDate: Long = -1
 
         if (arguments != null) {
             val user = arguments?.get("user")!! as UserModel
@@ -79,7 +80,7 @@ class AddTodoFragment : Fragment() {
                 val datePicker: MaterialDatePicker<*> = builder.build()
                 datePicker.show(requireActivity().supportFragmentManager, datePicker.toString())
                 datePicker.addOnPositiveButtonClickListener {
-                    Log.e("date: ", datePicker.headerText)
+                    // Log.e("date: ", datePicker.headerText)
                     btn_date.text = datePicker.headerText
 
                     val vals = datePicker.headerText.replace(",", "").split(" ") // Dec 12, 2020 -> Dec[0] 12[1] 2020[2]
@@ -94,14 +95,17 @@ class AddTodoFragment : Fragment() {
                     day = vals[1].toInt()
 
                     val parseDate = "$curMonthNum/${vals[1]}/${vals[2]} $timePickerHour:$timePickerMinute"
-                    Log.e("parseDate: ", parseDate)
+                    //                   Log.e("parseDate: ", parseDate)
                     if (year > 0 && month > 0 && day > 0) {
                         var formatter = DateTimeFormatter.ofPattern("M/d/y H:m")
                         val sf = SimpleDateFormat("M/d/y H:m")
                         sf.parse(parseDate)
-                        sf.calendar.time.hours = Log.e("date_val: ", sf.calendar.time.toString())
-                        var actionDate = LocalDate.parse(parseDate, formatter)
-                        Log.e("LocalDate: ", actionDate.toString())
+                        val date: Date = sf.parse(parseDate)
+                        actionDate = date.time
+
+//                        sf.calendar.time.hours = Log.e("date_val: ", sf.calendar.time.toInstant().toEpochMilli().toString())
+//                        actionDate =  LocalDate.parse(parseDate, formatter).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+//                        Log.e("LocalDate: ", actionDate.toString())
 
                     }
 
@@ -112,13 +116,27 @@ class AddTodoFragment : Fragment() {
         btn_cancel.setOnClickListener {
             closeThisFragment()
         }
-        btn_save_todo.setOnClickListener {
-            if (year > 0 && month > 0 && day > 0 && timePickerHour >= 0 && timePickerMinute >= 0 && categoryId >= 0 && todoPriority >= 0 && todoMessage.isNotEmpty()) {
 
+        // SAVE todo
+        btn_save_todo.setOnClickListener {
+            todoMessage=txt_msg.text.toString()
+            val newTodo = Todo(0, currentUser.uid, categoryId.toLong(), todoPriority, System.currentTimeMillis(), actionDate, todoMessage)
+            if (year > 0 && month > 0 && day > 0 && timePickerHour >= 0 && timePickerMinute >= 0 && categoryId >= 0 && todoPriority >= 0 && todoMessage.isNotEmpty()) {
+                // OK! All fields complete
+                // save ToDo
+                val db = TodoDatabase.getDatabase(requireContext())
+                //Log.e("db: ", "created: ${db.toString()}")
+                val dao = db.todoDao()
+                dao.insert(newTodo)
+                gotoWeekTasks(currentUser)
+                Toast.makeText(context, getResources().getString(R.string.todo_save_complete), Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(context, getResources().getString(R.string.todo_error_save), Toast.LENGTH_LONG).show()
+                Log.e("newTodo: ", "$newTodo")
             }
         }
+
+
         btn_manageCategories.setOnClickListener {
             gotoCategories(currentUser)
         }
@@ -130,24 +148,23 @@ class AddTodoFragment : Fragment() {
             Log.e("category: ", "$item")
         }
         val categoryAdapter = ArrayAdapter(requireContext(), R.layout.textview_item_categories, categoryList)
-        val txtCategory = view.findViewById<TextInputEditText>(R.id.txt_category_name)
-//        val category = TodoCategory(0, currentUser.uid,txtCategory.text.toString())
-//        dao.addCategory(category)
-//        Log.e("addCategory: ", "added: $category")
+        val categoryListInput = view.findViewById<AutoCompleteTextView>(R.id.category_list)
+        categoryListInput.setAdapter(categoryAdapter)
+        categoryListInput.setOnItemClickListener { parent, view, position, id ->
 
-
-        // val adapter = ArrayAdapter(requireContext(), R.layout.textview_item_categories, c)
-
-        val catListInput = view.findViewById<AutoCompleteTextView>(R.id.category_list)
-        //textView.threshold = 0
-        catListInput.setAdapter(categoryAdapter)
-        catListInput.setOnItemClickListener { parent, view, position, id ->
-
-            Log.e("catId: ", "id:$id position:$position text:${catListInput.text}")
-            categoryList = dao.loadCategories(currentUser.uid).toMutableList(); categoryAdapter.notifyDataSetChanged()
-
+            Log.e("catId: ", "id:$id position:$position text:${categoryListInput.text}")
+            var cid = -1;
+            val selectedCategory = categoryListInput.text.toString()
+            for ((index, category) in categoryList.withIndex()) {
+                if (selectedCategory == category.name) {
+                    categoryId = category.id
+                }
+            }
         }
 
+        sliderPriority.addOnChangeListener { slider, value, fromUser ->
+            todoPriority = value.toDouble()
+        }
     }
 
     private fun closeThisFragment() {

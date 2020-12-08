@@ -35,6 +35,14 @@
 
             <!-- Scrollable content -->
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_week_tasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/item_week_task"
+            />
+
+
         </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.bottomappbar.BottomAppBar
