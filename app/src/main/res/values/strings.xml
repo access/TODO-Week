@@ -38,4 +38,7 @@
     <string name="todo_delete_confirm">Are you sure you want to delete this category?</string>
     <string name="todo_back_to_todo">Back</string>
     <string name="todo_save_complete">Your ToDo saved successfully!</string>
+    <string name="todo_weekday_count">ToDo count: </string>
+    <string name="todo_weekday_last_todo">Last Todo: </string>
+    <string name="todo_weekday_show_all">Show all</string>
 </resources>

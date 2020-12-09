@@ -3,10 +3,21 @@
     android:id="@+id/view_holder"
     android:layout_width="fill_parent"
     android:layout_height="65dp"
-    android:layout_margin="5dp"
+    android:layout_marginTop="0dp"
     android:gravity="center_vertical">
-
+    <ProgressBar
+        android:id="@+id/progress_priority"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:theme="@style/ProgressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_margin="0dp"
+        android:max="100"
+        android:progress="10"
+        />
     <LinearLayout
+        android:layout_marginTop="0dp"
+        android:paddingTop="0dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
@@ -17,27 +28,18 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:gravity="center_vertical|center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:layout_gravity="center_horizontal"
-                    android:id="@+id/txt_date_day"
+                    android:id="@+id/txt_date_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
-                    android:text="12"
-                    android:textSize="25dp"
-                    android:textStyle="bold" />
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_gravity="center_horizontal"
-                    android:id="@+id/txt_date_month"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
-                    android:text="12"
-                    android:textSize="20dp"
+
+                    android:text="12.12.2022"
+                    android:textSize="16dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -54,24 +56,33 @@
                 android:orientation="vertical">
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/txt_todo_count"
+                    android:id="@+id/txt_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="15dp"
-                    android:text="ToDo count: 3"
+                    android:text="16:45"
+                    android:textSize="16dp" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txt_todo_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:text="[Home]"
+                    android:textSize="16dp" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txt_todo_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:text="Shopping - TV Box"
                     android:textSize="16dp" />
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/txt_last_task"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15dp"
-                    android:text="Last Todo: 16:45 [Shopping] TV Box "
-                    android:textSize="16dp" />
 
             </LinearLayout>
         </LinearLayout>

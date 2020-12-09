@@ -5,7 +5,7 @@
     android:id="@+id/weeklist_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.WeekListFragment">
+    tools:context=".fragments.AllToDoListFragment">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
 
@@ -23,7 +23,7 @@
                 android:layout_height="?attr/actionBarSize"
                 app:navigationIcon="@drawable/ic_menu"
                 app:menu="@menu/top_app_bar"
-                app:title="@string/tasks7days_title" />
+                app:title="@string/todo_weekday_show_all" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -39,7 +39,7 @@
                 android:id="@+id/recycler_week_tasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:listitem="@layout/item_week_task"
+                tools:listitem="@layout/item_day_task"
             />
 
 
@@ -65,14 +65,14 @@
             />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/btn_show_all"
+            android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|left"
             android:layout_margin="16dp"
             android:backgroundTint="@color/colorAccent"
-            android:text="@string/todo_weekday_show_all"
-            app:icon="@drawable/ic_show_all" />
+            android:text="@string/cancel"
+            app:icon="@drawable/ic_cancel" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

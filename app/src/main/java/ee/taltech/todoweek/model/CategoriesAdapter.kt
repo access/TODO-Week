@@ -5,17 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.*
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.*
 import ee.taltech.todoweek.R
 import ee.taltech.todoweek.database.weekTaskList.TodoCategory
 import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
-import kotlinx.android.synthetic.main.categories_fragment.*
-import kotlinx.android.synthetic.main.categories_fragment.view.*
 import kotlinx.android.synthetic.main.item_category_layout.view.*
-
 
 class CategoriesAdapter(var list: MutableList<TodoCategory>, private val cellClickListener: CellClickListener) :
     RecyclerView.Adapter<CategoryViewHolder>() {
