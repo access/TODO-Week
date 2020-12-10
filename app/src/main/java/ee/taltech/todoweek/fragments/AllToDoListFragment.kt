@@ -22,9 +22,6 @@ import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
 import ee.taltech.todoweek.model.*
 import kotlinx.android.synthetic.main.add_todo.*
 import kotlinx.android.synthetic.main.weeklist_fragment.*
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 
 class AllToDoListFragment : Fragment(), CellClickListener {
     lateinit var userDB: UsersDB

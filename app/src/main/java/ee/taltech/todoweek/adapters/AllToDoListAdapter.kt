@@ -22,6 +22,7 @@ import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
 import ee.taltech.todoweek.model.CellClickListener
 import kotlinx.android.synthetic.main.item_day_task.view.*
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class AllToDoListAdapter(var list: MutableList<Todo>, val cellClickListener: CellClickListener) : RecyclerView.Adapter<ToDoViewHolder>() {
     lateinit var db: TodoDatabase
@@ -42,7 +43,7 @@ class AllToDoListAdapter(var list: MutableList<Todo>, val cellClickListener: Cel
     override fun onBindViewHolder(holder: ToDoViewHolder, position: Int) {
         val dateFormat = DateTimeFormatter.ofPattern("dd.MMM.yyyy")
         val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
-        val actionDate: LocalDateTime = Instant.ofEpochMilli(list[position].actionDate).atZone(ZoneId.systemDefault()).toLocalDateTime()
+        val actionDate: LocalDateTime = Instant.ofEpochMilli(list[position].actionDate).atZone(ZoneOffset.UTC).toLocalDateTime()
         holder.date.text = actionDate.format(dateFormat)
         holder.time.text = actionDate.format(timeFormat)
         holder.priorityProgress.progress = list[position].priority.toInt()

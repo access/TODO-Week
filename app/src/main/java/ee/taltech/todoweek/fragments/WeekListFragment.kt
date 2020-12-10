@@ -55,7 +55,7 @@ class WeekListFragment : CellClickListener, Fragment() {
                 // draw recyclerview as fill list by days from today to 7 days forward
                 // init today point
                 val currDate = System.currentTimeMillis()
-                val startDate: LocalDate = Instant.ofEpochMilli(currDate).atZone(ZoneId.systemDefault()).toLocalDate()
+                val startDate: LocalDate = Instant.ofEpochMilli(currDate).atZone(ZoneOffset.UTC).toLocalDate()
                 Log.e("startDate: ", "$startDate")
                 var weekDayList: MutableList<WeekDay> = ArrayList()
                 for (idx in 1..7) {

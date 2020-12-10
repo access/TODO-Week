@@ -89,7 +89,7 @@ class AddTodoFragment : Fragment() {
                     // date fill
                     val dateFormat = DateTimeFormatter.ofPattern("MMM dd, yyyy")
                     val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
-                    val actionDate: LocalDateTime = Instant.ofEpochMilli(todo.actionDate).atZone(ZoneId.systemDefault()).toLocalDateTime()
+                    val actionDate: LocalDateTime = Instant.ofEpochMilli(todo.actionDate).atZone(ZoneOffset.UTC).toLocalDateTime()
                     btnTime.text = actionDate.format(timeFormat)
                     btnDate.text = actionDate.format(dateFormat)
                     // slider fill

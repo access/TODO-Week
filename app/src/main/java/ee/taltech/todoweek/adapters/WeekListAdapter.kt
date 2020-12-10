@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter
 import android.util.Log
 import ee.taltech.todoweek.model.CellClickListener
 import ee.taltech.todoweek.model.WeekDay
+import java.time.ZoneOffset
 
 class WeekListAdapter(var list: MutableList<WeekDay>, val cellClickListener: CellClickListener) : RecyclerView.Adapter<WeekDayViewHolder>() {
 
@@ -34,7 +35,7 @@ class WeekListAdapter(var list: MutableList<WeekDay>, val cellClickListener: Cel
     override fun onBindViewHolder(holder: WeekDayViewHolder, position: Int) {
         if (list.count() > 0) {
             val currDate = System.currentTimeMillis()
-            val dayDate: LocalDate = Instant.ofEpochMilli(list[position].actionDate).atZone(ZoneId.systemDefault()).toLocalDate()
+            val dayDate: LocalDate = Instant.ofEpochMilli(list[position].actionDate).atZone(ZoneOffset.UTC).toLocalDate()
             val lastTodo = list[position].getNearTodo()
             var lastTodoTitle = ""
             Log.e("weekDayLastTodoCount: ", lastTodo.size.toString())
