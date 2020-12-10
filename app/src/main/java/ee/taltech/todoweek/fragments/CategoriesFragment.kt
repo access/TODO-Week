@@ -24,15 +24,12 @@ class CategoriesFragment : Fragment() {
     lateinit var currentUser: UserModel
     lateinit var settingsDB: SettingsDBHelper
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         settingsDB = SettingsDBHelper(this)
         userDB = UsersDB(this)
-
         val view = inflater.inflate(R.layout.categories_fragment, container, false)
-
         return view
     }
 
@@ -40,7 +37,6 @@ class CategoriesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val db = TodoDatabase.getDatabase(requireContext())
-        //Log.e("db: ", "created: ${db.toString()}")
         val dao = db.todoCategoryDao()
 
         if (arguments != null) {
@@ -55,12 +51,10 @@ class CategoriesFragment : Fragment() {
         }
         // fill categories recyclerview
         val cats = dao.loadCategories(currentUser.uid).toMutableList()
-        val tmpContext = this
-
         recyclerView.apply {
             setHasFixedSize(true)
             adapter = CategoriesAdapter(cats)
-            layoutManager = LinearLayoutManager(this.context)
+            layoutManager = LinearLayoutManager(requireContext())
             addItemDecoration(
                 DividerItemDecoration(
                     this.context, DividerItemDecoration.VERTICAL
@@ -71,51 +65,9 @@ class CategoriesFragment : Fragment() {
         btnBack.setOnClickListener {
             activity?.onBackPressed()
         }
-//        val btnDeleteCategory = view.findViewById<MaterialButton>(R.id.btn_delete_category)
-//        btnDeleteCategory?.setOnClickListener {
-//            val category = it.getTag(0) as TodoCategory
-//            if (category != null) {
-//                MaterialAlertDialogBuilder(requireContext()).setTitle("${resources.getString(R.string.delete)} - ${category.name}")
-//                    .setMessage(R.string.todo_delete_confirm).setNeutralButton(R.string.cancel) { dialog, which ->
-//                        // Respond to neutral button press
-//                    }
-////                .setNegativeButton(resources.getString(R.string.decline)) { dialog, which ->
-////                    // Respond to negative button press
-////                }
-//                    .setPositiveButton(R.string.delete) { dialog, which ->
-//                        // Respond to positive button press
-//                        dao.deleteCategory(category)
-//                        reloadCurrentFragment()
-//                        Toast.makeText(context, getResources().getString(R.string.todo_category_deleted), Toast.LENGTH_LONG).show()
-//                    }.show()
-//            }
-//        }
-
-//        btnDeleteCategory?.setOnClickListener {
-//            val category = it.getTag(0) as TodoCategory
-//            if (category != null) {
-//                dao.deleteCategory(category)
-//                Log.e("addCategory: ", "added: $category")
-//                val all = dao.loadCategories(currentUser.uid)
-//                for (el in all) {
-//                    Log.e("category: ", "val: ${el.toString()}")
-//                }
-//                Toast.makeText(context, getResources().getString(R.string.todo_category_deleted), Toast.LENGTH_LONG).show()
-//                reloadCurrentFragment()
-//            }
-//        }
     }
 
-    private fun reloadCurrentFragment() {
-        val transaction = fragmentManager?.beginTransaction()?.replace(R.id.container, this)
-        transaction?.commit()
-    }
-
-    private fun closeThisFragment() {
-        activity?.onBackPressed()
-    }
-
-    fun gotoCategory(user: UserModel) {
+    private fun gotoCategory(user: UserModel) {
         val reqFragment = CategoryFragment()
         val bundle = Bundle()
         bundle.putParcelable("user", user)

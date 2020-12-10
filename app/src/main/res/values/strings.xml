@@ -43,4 +43,5 @@
     <string name="todo_weekday_show_all">Show all</string>
     <string name="todo_edit_todo">Edit ToDo</string>
     <string name="todo_item_deleted">ToDo item deleted successfully.</string>
+    <string name="todo_day_tasks">Day ToDo`s</string>
 </resources>

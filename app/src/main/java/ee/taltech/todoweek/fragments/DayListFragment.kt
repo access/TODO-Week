@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.MaterialToolbar
 import ee.taltech.todoweek.R
-import ee.taltech.todoweek.adapters.AllToDoListAdapter
-import ee.taltech.todoweek.adapters.ToDoViewHolder
+import ee.taltech.todoweek.adapters.DayListAdapter
+import ee.taltech.todoweek.adapters.ToDoDayViewHolder
 import ee.taltech.todoweek.database.settings.SettingsDBHelper
 import ee.taltech.todoweek.database.user.UserModel
 import ee.taltech.todoweek.database.user.UsersDB
@@ -22,15 +22,14 @@ import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
 import ee.taltech.todoweek.model.*
 import kotlinx.android.synthetic.main.add_todo.*
 import kotlinx.android.synthetic.main.weeklist_fragment.*
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 
-class AllToDoListFragment : Fragment(), CellClickListener {
+
+class DayListFragment : Fragment(), CellClickListener {
     lateinit var userDB: UsersDB
     lateinit var currentUser: UserModel
     lateinit var settingsDB: SettingsDBHelper
     lateinit var db: TodoDatabase
+    lateinit var currentDayTodoList: MutableList<Todo>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -38,7 +37,7 @@ class AllToDoListFragment : Fragment(), CellClickListener {
         settingsDB = SettingsDBHelper(this)
         userDB = UsersDB(this)
         db = TodoDatabase.getDatabase(requireContext())
-        val view = inflater.inflate(R.layout.all_todo_fragment, container, false)
+        val view = inflater.inflate(R.layout.day_todo_fragment, container, false)
         return view
     }
 
@@ -50,40 +49,36 @@ class AllToDoListFragment : Fragment(), CellClickListener {
             currentUser = user
             if (user.uid >= 0) { //correct user
                 val navBar = view.findViewById<MaterialToolbar>(R.id.navBar)
-                navBar.title = "${user.username} | ${resources.getString(R.string.todo_weekday_show_all)}"
-
-
-                val dao = db.todoDao()
-                // draw recyclerview as fill list by days from today to 7 days forward
-                // init today point
-                val currDate = System.currentTimeMillis()
-                var weekDayList: MutableList<WeekDay> = ArrayList()
-                val allTodo = dao.getAllUserTodos(currentUser.uid).toMutableList()
-                for (todo in allTodo) {
-                    weekDayList.add(WeekDay(todo.actionDate, currentUser.uid, requireContext()))
-                }
-                val thisContext = this
-                recycler_week_tasks.apply {
-                    setHasFixedSize(true)
-                    adapter = AllToDoListAdapter(allTodo, thisContext)
-                    layoutManager = LinearLayoutManager(requireContext())
-                    addItemDecoration(
-                        DividerItemDecoration(
-                            requireContext(), DividerItemDecoration.VERTICAL
+                navBar.title = "${user.username} | ${resources.getString(R.string.todo_day_tasks)}"
+                // init weekday
+                val actionDate = if (arguments!!.get("date") == null) null else arguments?.get("date")!! as SendData
+                if (actionDate != null) {
+                    // draw recyclerview as fill list by hours
+                    // get list of today tasks
+                    val dayList = db.todoDao().getToDosByDate(actionDate.actionDate, currentUser.uid).toMutableList()
+                    currentDayTodoList = dayList
+                    val thisContext = this
+                    recycler_week_tasks.apply {
+                        setHasFixedSize(true)
+                        adapter = DayListAdapter(dayList, thisContext)
+                        layoutManager = LinearLayoutManager(requireContext())
+                        addItemDecoration(
+                            DividerItemDecoration(
+                                requireContext(), DividerItemDecoration.VERTICAL
+                            )
                         )
-                    )
+                    }
                 }
+
             }
             btn_add_todo.setOnClickListener {
                 gotoAddTodo(user)
             }
         }
-
         btn_cancel.setOnClickListener {
             activity?.onBackPressed()
         }
     }
-
 
     private fun gotoAddTodo(user: UserModel) {
         val nextFragment = AddTodoFragment()
@@ -111,10 +106,7 @@ class AllToDoListFragment : Fragment(), CellClickListener {
     }
 
     override fun onCellClickListener(position: Int, toDoViewHolder: Any) {
-        val holder = toDoViewHolder as ToDoViewHolder
-        val reqTodo = db.todoDao().loadSingleById(holder.todoId)
-        Log.e("todo: ", reqTodo.toString())
-        gotoEditTodo(currentUser, reqTodo)
+        Log.e("dayClick: ", "${currentDayTodoList[position]}")
+        gotoEditTodo(currentUser, currentDayTodoList[position])
     }
-
 }

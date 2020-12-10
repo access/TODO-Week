@@ -101,7 +101,6 @@ class AddTodoFragment : Fragment() {
                     topBar.title = "${user.username} ${resources.getString(R.string.todo_addtodo)}"
 
                 }
-
                 // time listener
                 btn_time.setOnClickListener {
                     val timePicker = MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).build()
@@ -129,8 +128,6 @@ class AddTodoFragment : Fragment() {
                     datePicker.addOnPositiveButtonClickListener {
                         // Log.e("date: ", datePicker.headerText)
                         btn_date.text = datePicker.headerText
-
-
                         val vals = datePicker.headerText.replace(",", "").split(" ") // Dec 12, 2020 -> Dec[0] 12[1] 2020[2]
                         val monthNames: MutableMap<String, Int> = HashMap()
                         monthNames["Jan"] = 1; monthNames["Feb"] = 2; monthNames["Mar"] = 3; monthNames["Apr"] = 4
@@ -143,15 +140,12 @@ class AddTodoFragment : Fragment() {
                         day = vals[1].toInt()
 
                         val parseDate = "$curMonthNum/${vals[1]}/${vals[2]} $timePickerHour:$timePickerMinute"
-                        //                   Log.e("parseDate: ", parseDate)
                         if (year > 0 && month > 0 && day > 0) {
                             var formatter = DateTimeFormatter.ofPattern("M/d/y H:m")
                             val sf = SimpleDateFormat("M/d/y H:m")
                             sf.parse(parseDate)
                             val date: Date = sf.parse(parseDate)
                             actionDate = date.time
-
-
                             // set date from current Todo
                             if (currentToDo != null) {
                                 var selectedDate = Instant.ofEpochMilli(actionDate).atZone(ZoneOffset.UTC).toLocalDateTime()
@@ -160,16 +154,8 @@ class AddTodoFragment : Fragment() {
                                 val newInMillis: Long = (newActionDate.toEpochSecond(ZoneOffset.UTC) * 1000)
                                 currentToDo!!.actionDate = newInMillis
                             }
-
-
-//                        sf.calendar.time.hours = Log.e("date_val: ", sf.calendar.time.toInstant().toEpochMilli().toString())
-//                        actionDate =  LocalDate.parse(parseDate, formatter).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-//                        Log.e("LocalDate: ", actionDate.toString())
-
                         }
-
                     }
-
                 }
             }
         }

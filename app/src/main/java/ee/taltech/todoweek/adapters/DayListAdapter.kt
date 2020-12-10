@@ -23,15 +23,15 @@ import ee.taltech.todoweek.model.CellClickListener
 import kotlinx.android.synthetic.main.item_day_task.view.*
 import java.time.LocalDateTime
 
-class AllToDoListAdapter(var list: MutableList<Todo>, val cellClickListener: CellClickListener) : RecyclerView.Adapter<ToDoViewHolder>() {
+class DayListAdapter(var list: MutableList<Todo>, private val cellClickListener: CellClickListener) : RecyclerView.Adapter<ToDoDayViewHolder>() {
     lateinit var db: TodoDatabase
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoDayViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_day_task, parent, false
+            R.layout.item_hour_task, parent, false
         )
         db = TodoDatabase.getDatabase(itemView.context)
-        return ToDoViewHolder(itemView)
+        return ToDoDayViewHolder(itemView)
     }
 
     override fun getItemCount(): Int {
@@ -39,11 +39,10 @@ class AllToDoListAdapter(var list: MutableList<Todo>, val cellClickListener: Cel
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onBindViewHolder(holder: ToDoViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ToDoDayViewHolder, position: Int) {
         val dateFormat = DateTimeFormatter.ofPattern("dd.MMM.yyyy")
         val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
         val actionDate: LocalDateTime = Instant.ofEpochMilli(list[position].actionDate).atZone(ZoneId.systemDefault()).toLocalDateTime()
-        holder.date.text = actionDate.format(dateFormat)
         holder.time.text = actionDate.format(timeFormat)
         holder.priorityProgress.progress = list[position].priority.toInt()
         holder.message.movementMethod = ScrollingMovementMethod()
@@ -55,15 +54,13 @@ class AllToDoListAdapter(var list: MutableList<Todo>, val cellClickListener: Cel
             holder.todoCategory.text = ""
         }
         holder.message.text = list[position].message
-
         holder.itemView.setOnClickListener {
-            holder.todoId = list[position].id // id of Todo, what need to open on click
+            holder.actionDate = list[position].actionDate
             cellClickListener.onCellClickListener(position, holder)
         }
-
         holder.btn_delete.setOnClickListener {
             val dt = holder.itemView.context.getString(R.string.delete)
-            MaterialAlertDialogBuilder(holder.itemView.context).setTitle(dt).setMessage(R.string.todo_delete_confirm).setNeutralButton(R.string.cancel) { dialog, which ->
+            MaterialAlertDialogBuilder(holder.itemView.context).setTitle("$dt").setMessage(R.string.todo_delete_confirm).setNeutralButton(R.string.cancel) { dialog, which ->
                 // Respond to neutral button press
             }.setPositiveButton(R.string.delete) { dialog, which ->
                 // Respond to positive button press
@@ -79,13 +76,12 @@ class AllToDoListAdapter(var list: MutableList<Todo>, val cellClickListener: Cel
     }
 }
 
-class ToDoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val date: MaterialTextView = itemView.txt_date_date
+class ToDoDayViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val time: MaterialTextView = itemView.txt_time
     val todoCategory: MaterialTextView = itemView.txt_todo_category
     val message: MaterialTextView = itemView.txt_todo_message
     val btn_delete: MaterialButton = itemView.btn_delete_todo
     val priorityProgress: ProgressBar = itemView.progress_priority
-    var todoId: Int = -1
+    var actionDate: Long = -1L
 }
 

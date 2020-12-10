@@ -39,8 +39,6 @@ class AuthFragment : Fragment() {
             var uname = view.findViewById<TextInputEditText>(R.id.username_edit_text).text.toString()
             var pass = view.findViewById<TextInputEditText>(R.id.password_edit_text).text.toString()
             val isSavePass = if (view.findViewById<CheckBox>(R.id.chk_login_savepass).isChecked) 1 else 0
-
-
             for (x in userDB.readAllUsers()) {
                 Log.e("user: ", x.toString())
             }
@@ -75,11 +73,11 @@ class AuthFragment : Fragment() {
                     val passwordInput = view.findViewById<TextInputEditText>(R.id.password_edit_text)
                     usernameInput.setText(currentUser.username)
                     passwordInput.setText(currentUser.password)
-                                       gotoWeekTasks(currentUser)
+                    // lastuser autologin
+                    //gotoWeekTasks(currentUser)
                 }
             }
         }
-
     }
 
     private fun isLoginDataValid(username: String, password: String, checkedSavePass: Int): Boolean {

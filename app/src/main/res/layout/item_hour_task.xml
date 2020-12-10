@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_holder"
+    android:layout_width="fill_parent"
+    android:layout_height="80dp"
+    android:layout_marginTop="0dp"
+    android:gravity="center_vertical">
+    <ProgressBar
+        android:id="@+id/progress_priority"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:theme="@style/ProgressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_margin="0dp"
+        android:max="100"
+        android:progress="10"
+        />
+    <LinearLayout
+        android:layout_marginTop="0dp"
+        android:paddingTop="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="120dp"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txt_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="16:45"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_marginTop="5dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txt_todo_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:text="[Home]"
+                    android:textColor="@android:color/holo_blue_dark"
+                    android:textSize="16dp" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txt_todo_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:text="Shopping - TV Box"
+                    android:textColor="@android:color/holo_green_dark"
+                    android:textSize="16dp" />
+
+
+            </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity=""
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete_todo"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:layout_gravity="center"
+            android:text="@string/delete" />
+    </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>
+

@@ -2,6 +2,7 @@ package ee.taltech.todoweek.fragments
 
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
 import ee.taltech.todoweek.model.WeekDay
 import ee.taltech.todoweek.adapters.WeekListAdapter
 import ee.taltech.todoweek.model.CellClickListener
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.weeklist_fragment.*
 import java.time.Instant
 import java.time.LocalDate
@@ -50,7 +52,6 @@ class WeekListFragment : CellClickListener, Fragment() {
             val user = arguments?.get("user")!! as UserModel
             currentUser = user
             if (user.uid >= 0) { //correct user
-
                 // draw recyclerview as fill list by days from today to 7 days forward
                 // init today point
                 val currDate = System.currentTimeMillis()
@@ -74,9 +75,8 @@ class WeekListFragment : CellClickListener, Fragment() {
                         )
                     )
                 }
-
-
             }
+
             btn_add_todo.setOnClickListener {
                 gotoAddTodo(user)
             }
@@ -97,11 +97,8 @@ class WeekListFragment : CellClickListener, Fragment() {
                     true
                 } else false
             }
-
-
         }
     }
-
 
     private fun gotoAddTodo(user: UserModel) {
         val nextFragment = AddTodoFragment()
@@ -119,6 +116,15 @@ class WeekListFragment : CellClickListener, Fragment() {
         navigateTo(nextFragment, true)
     }
 
+    private fun gotoDayList(user: UserModel, sendData: SendData) {
+        val nextFragment = DayListFragment()
+        val bundle = Bundle()
+        bundle.putParcelable("user", user)
+        bundle.putParcelable("date", sendData)
+        nextFragment.arguments = bundle
+        navigateTo(nextFragment, true)
+    }
+
     private fun navigateTo(fragment: Fragment, addToBackstack: Boolean) {
         val transaction = fragmentManager?.beginTransaction()?.replace(R.id.container, fragment)
         if (addToBackstack) {
@@ -129,7 +135,11 @@ class WeekListFragment : CellClickListener, Fragment() {
 
     override fun onCellClickListener(position: Int, attributes: Any) {
         val weekDay = attributes as WeekDay
-        Log.e("weekDay: ","$weekDay lastTodo: ${weekDay.getNearTodo().elementAt(0)}")
+        Log.e("weekDay: ", "$weekDay lastTodo: ${weekDay.getNearTodo().elementAt(0)}")
+        gotoDayList(currentUser, SendData(weekDay.actionDate))
     }
 
 }
+
+@Parcelize
+data class SendData(val actionDate: Long) : Parcelable

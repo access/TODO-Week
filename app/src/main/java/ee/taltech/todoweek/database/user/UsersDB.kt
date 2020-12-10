@@ -32,16 +32,13 @@ class UsersDB(context: Fragment) : SQLiteOpenHelper(context.requireContext(), DA
         if (user.username.isEmpty()) return -1
         // Gets the data repository in write mode
         val db = writableDatabase
-
         // Create a new map of values, where column names are the keys
         val values = ContentValues()
         values.put(DBContract.UserEntry.COLUMN_IS_PASSWORD_SAVED, user.isSavedPassword)
         values.put(DBContract.UserEntry.COLUMN_USERNAME, user.username)
         values.put(DBContract.UserEntry.COLUMN_PASSWORD, user.password)
-
         // Insert the new row, returning the primary key value of the new row
         val newRowId = db.insert(DBContract.UserEntry.TABLE_NAME, null, values)
-
         return newRowId
     }
 
@@ -50,16 +47,6 @@ class UsersDB(context: Fragment) : SQLiteOpenHelper(context.requireContext(), DA
         // Gets the data repository in write mode
         val db = writableDatabase
         // update user save pass state
-//        var cursor: Cursor? = null
-//        try {
-//            cursor = db.rawQuery(
-//                "UPDATE " + DBContract.UserEntry.TABLE_NAME + " SET " + DBContract.UserEntry.COLUMN_IS_PASSWORD_SAVED + "='" + state + "' WHERE " + DBContract.UserEntry.COLUMN_USER_ID + "='" + uid + "'",
-//                null
-//            )
-//        } catch (e: SQLiteException) {
-//            return false
-//        }
-//        return cursor != null
         val values = ContentValues()
         values.put(DBContract.UserEntry.COLUMN_IS_PASSWORD_SAVED, state)
         // Update the row, returning the primary key value of the row
@@ -71,30 +58,24 @@ class UsersDB(context: Fragment) : SQLiteOpenHelper(context.requireContext(), DA
     fun deleteUser(userid: String): Boolean {
         // Gets the data repository in write mode
         val db = writableDatabase
-
         // Define 'where' part of query.
         val selection = DBContract.UserEntry.COLUMN_USER_ID + " LIKE ?"
         // Specify arguments in placeholder order.
         val selectionArgs = arrayOf(userid)
         // Issue SQL statement.
         db.delete(DBContract.UserEntry.TABLE_NAME, selection, selectionArgs)
-
         return true
     }
 
     fun readUser(username: String): UserModel {
         var user = UserModel(-1, -1, "", "")
         val db = writableDatabase
-//        db.execSQL(SQL_DELETE_ENTRIES)
-//        db.execSQL(SQL_CREATE_ENTRIES)
         var cursor: Cursor? = null
         try {
             cursor = db.rawQuery(
-                "select * from " + DBContract.UserEntry.TABLE_NAME + " WHERE UPPER(" + DBContract.UserEntry.COLUMN_USERNAME + ")=UPPER('" + username + "')",
-                null
+                "select * from " + DBContract.UserEntry.TABLE_NAME + " WHERE UPPER(" + DBContract.UserEntry.COLUMN_USERNAME + ")=UPPER('" + username + "')", null
             )
         } catch (e: SQLiteException) {
-            // if table not yet present, create it
             db.execSQL(SQL_CREATE_ENTRIES)
             return user
         }
@@ -108,7 +89,6 @@ class UsersDB(context: Fragment) : SQLiteOpenHelper(context.requireContext(), DA
             isSavedPass = cursor.getInt(cursor.getColumnIndex(DBContract.UserEntry.COLUMN_IS_PASSWORD_SAVED))
             username = cursor.getString(cursor.getColumnIndex(DBContract.UserEntry.COLUMN_USERNAME))
             password = cursor.getString(cursor.getColumnIndex(DBContract.UserEntry.COLUMN_PASSWORD))
-
             user = UserModel(uid, isSavedPass, username, password)
         }
         return user
@@ -124,10 +104,6 @@ class UsersDB(context: Fragment) : SQLiteOpenHelper(context.requireContext(), DA
             db.execSQL(SQL_CREATE_ENTRIES)
             return ArrayList()
         }
-
-//        db.execSQL(SQL_DELETE_ENTRIES)
-//        db.execSQL(SQL_CREATE_ENTRIES)
-
         var uid: Long
         var isSavedPass: Int
         var username: String
@@ -138,7 +114,6 @@ class UsersDB(context: Fragment) : SQLiteOpenHelper(context.requireContext(), DA
                 isSavedPass = cursor.getInt(cursor.getColumnIndex(DBContract.UserEntry.COLUMN_IS_PASSWORD_SAVED))
                 username = cursor.getString(cursor.getColumnIndex(DBContract.UserEntry.COLUMN_USERNAME))
                 password = cursor.getString(cursor.getColumnIndex(DBContract.UserEntry.COLUMN_PASSWORD))
-
                 users.add(UserModel(uid, isSavedPass, username, password))
                 cursor.moveToNext()
             }
@@ -153,8 +128,7 @@ class UsersDB(context: Fragment) : SQLiteOpenHelper(context.requireContext(), DA
         var cursor: Cursor? = null
         try {
             cursor = db.rawQuery(
-                "select COUNT(*) AS cnt from " + DBContract.UserEntry.TABLE_NAME + " where UPPER(" + DBContract.UserEntry.COLUMN_USERNAME + ") = UPPER('" + username + "')",
-                null
+                "select COUNT(*) AS cnt from " + DBContract.UserEntry.TABLE_NAME + " where UPPER(" + DBContract.UserEntry.COLUMN_USERNAME + ") = UPPER('" + username + "')", null
             )
         } catch (e: SQLiteException) {
             return false
@@ -163,7 +137,6 @@ class UsersDB(context: Fragment) : SQLiteOpenHelper(context.requireContext(), DA
         val count = DatabaseUtils.queryNumEntries(
             db, "users", "UPPER(username)=UPPER('$username')"
         )
-        //Log.e("count: ", count.toString())
         return count > 0L
     }
 
@@ -174,8 +147,6 @@ class UsersDB(context: Fragment) : SQLiteOpenHelper(context.requireContext(), DA
 
         private val SQL_CREATE_ENTRIES =
             "CREATE TABLE " + DBContract.UserEntry.TABLE_NAME + " (" + DBContract.UserEntry.COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + DBContract.UserEntry.COLUMN_USERNAME + " TEXT," + DBContract.UserEntry.COLUMN_IS_PASSWORD_SAVED + " INTEGER," + DBContract.UserEntry.COLUMN_PASSWORD + " TEXT)"
-
         private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DBContract.UserEntry.TABLE_NAME
     }
-
 }

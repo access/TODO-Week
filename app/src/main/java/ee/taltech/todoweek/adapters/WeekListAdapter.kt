@@ -35,19 +35,15 @@ class WeekListAdapter(var list: MutableList<WeekDay>, val cellClickListener: Cel
         if (list.count() > 0) {
             val currDate = System.currentTimeMillis()
             val dayDate: LocalDate = Instant.ofEpochMilli(list[position].actionDate).atZone(ZoneId.systemDefault()).toLocalDate()
-
-
             val lastTodo = list[position].getNearTodo()
             var lastTodoTitle = ""
             Log.e("weekDayLastTodoCount: ", lastTodo.size.toString())
             if (lastTodo.count() > 0 && lastTodo.elementAt(0) != null) lastTodoTitle = list[position].getNearTodo().elementAt(0).message
-
             holder.dateDay.text = dayDate.format(DateTimeFormatter.ofPattern("d"))
             holder.dateMonth.text = dayDate.format(DateTimeFormatter.ofPattern("MMM"))
             holder.todoCountPerDay.text = "Day task count: " + list[position].taskCount().toString()
             holder.lastTodo.text = "Near task: " + lastTodoTitle
         }
-
         holder.itemView.setOnClickListener {
             cellClickListener.onCellClickListener(position, list[position]) // send WeekDay
         }

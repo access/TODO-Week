@@ -24,22 +24,12 @@ class CreateUserFragment : Fragment(), NavigationHost {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         userDB = UsersDB(this)
-
         val view = inflater.inflate(R.layout.create_user, container, false)
-
-        // Set an error if the password is less than 8 characters.
-//        view.findViewById<MaterialButton>(R.id.createUser_button).setOnClickListener {
-//            Log.e("createUser_button: ","ok")
-//        }
-
-
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //userDB = UsersDB(this)
 
         view.findViewById<MaterialButton>(R.id.createUser_button).setOnClickListener {
             val uname = view.findViewById<TextInputEditText>(R.id.username_edit_text).text.toString()
@@ -55,7 +45,6 @@ class CreateUserFragment : Fragment(), NavigationHost {
                     gotoWeekTasks(user)
                     if (isSavePass > 0) settingsDB.saveLastUsername(uname)
                     else settingsDB.saveLastUsername("none")
-
                 }
             } else {
                 Toast.makeText(context, getResources().getString(R.string.error_registration), Toast.LENGTH_LONG).show()
@@ -71,8 +60,6 @@ class CreateUserFragment : Fragment(), NavigationHost {
         }
     }
 
-
-    // "isPasswordValid" from "Navigate to the next Fragment" section method goes here
     private fun isRegistrationValid(
         username: String, password: String, isSavePass: Int
     ): Boolean {
@@ -89,17 +76,15 @@ class CreateUserFragment : Fragment(), NavigationHost {
 
         for (x in userDB.readAllUsers()) {
             Log.e("user: ", x.toString())
-            //usersDBHelper.deleteUser(x.uid.toString())
         }
         Log.e("lastuser: ", settingsDB.getLastUsername().lastusername)
-
 
         if (username.isEmpty()) return false
         // pass no need check, may be empty - optional
         return true
     }
 
-    fun gotoWeekTasks(user: UserModel) {
+    private fun gotoWeekTasks(user: UserModel) {
         val weekFrag = WeekListFragment()
         val bundle = Bundle()
         bundle.putParcelable("user", user)
@@ -109,11 +94,9 @@ class CreateUserFragment : Fragment(), NavigationHost {
 
     override fun navigateTo(fragment: Fragment, addToBackstack: Boolean) {
         val transaction = fragmentManager?.beginTransaction()?.replace(R.id.container, fragment)
-
         if (addToBackstack) {
             transaction?.addToBackStack(null)
         }
-
         transaction?.commit()
     }
 
