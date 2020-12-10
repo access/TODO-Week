@@ -18,6 +18,7 @@ import ee.taltech.todoweek.database.user.UsersDB
 import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
 import ee.taltech.todoweek.model.WeekDay
 import ee.taltech.todoweek.adapters.WeekListAdapter
+import ee.taltech.todoweek.model.CellClickListener
 import kotlinx.android.synthetic.main.weeklist_fragment.*
 import java.time.Instant
 import java.time.LocalDate
@@ -25,7 +26,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 
 
-class WeekListFragment : Fragment() {
+class WeekListFragment : CellClickListener, Fragment() {
     lateinit var userDB: UsersDB
     lateinit var currentUser: UserModel
     lateinit var settingsDB: SettingsDBHelper
@@ -47,24 +48,25 @@ class WeekListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (arguments != null) {
             val user = arguments?.get("user")!! as UserModel
-            currentUser=user
+            currentUser = user
             if (user.uid >= 0) { //correct user
 
                 // draw recyclerview as fill list by days from today to 7 days forward
                 // init today point
                 val currDate = System.currentTimeMillis()
                 val startDate: LocalDate = Instant.ofEpochMilli(currDate).atZone(ZoneId.systemDefault()).toLocalDate()
+                Log.e("startDate: ", "$startDate")
                 var weekDayList: MutableList<WeekDay> = ArrayList()
                 for (idx in 1..7) {
-                    Log.e("startDate: ", "$startDate")
                     val reqDate = startDate.plusDays(idx - 1L).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-                    Log.e("reqDate: ", "$reqDate")
+                    Log.e("reqDate: ", "$reqDate date:${startDate.plusDays(idx - 1L).atStartOfDay(ZoneOffset.UTC).toString()}")
                     weekDayList.add(WeekDay(reqDate, currentUser.uid, requireContext()))
                 }
+                val thisContext = this
 
                 recycler_week_tasks.apply {
                     setHasFixedSize(true)
-                    adapter = WeekListAdapter(weekDayList)
+                    adapter = WeekListAdapter(weekDayList, thisContext)
                     layoutManager = LinearLayoutManager(requireContext())
                     addItemDecoration(
                         DividerItemDecoration(
@@ -84,6 +86,19 @@ class WeekListFragment : Fragment() {
             btn_show_all.setOnClickListener {
                 gotoAllTodo(currentUser)
             }
+
+            val navBar = view.findViewById<MaterialToolbar>(R.id.topBar)
+            navBar.setOnMenuItemClickListener { item ->
+                if (true) {
+                    Log.e("clickedTopBar: ", "$item")
+                    for (todo in db.todoDao().getAll()) {
+                        Log.e("dbTodo: ", "$todo")
+                    }
+                    true
+                } else false
+            }
+
+
         }
     }
 
@@ -95,6 +110,7 @@ class WeekListFragment : Fragment() {
         nextFragment.arguments = bundle
         navigateTo(nextFragment, true)
     }
+
     private fun gotoAllTodo(user: UserModel) {
         val nextFragment = AllToDoListFragment()
         val bundle = Bundle()
@@ -109,6 +125,11 @@ class WeekListFragment : Fragment() {
             transaction?.addToBackStack(null)
         }
         transaction?.commit()
+    }
+
+    override fun onCellClickListener(position: Int, attributes: Any) {
+        val weekDay = attributes as WeekDay
+        Log.e("weekDay: ","$weekDay lastTodo: ${weekDay.getNearTodo().elementAt(0)}")
     }
 
 }

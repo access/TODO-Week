@@ -26,16 +26,16 @@ class MainActivity : AppCompatActivity(), NavigationHost {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().add(R.id.container, AuthFragment()).commit()
             navigateTo(AuthFragment(), true)
-            val db = getDatabase(this)
-            //Log.e("db: ", "created: ${db.toString()}")
-            val dao = db.todoDao()
-            val t = Todo(0, 1,0,0.0, System.currentTimeMillis(), System.currentTimeMillis(),"hello",true)
-            dao.insert(t)
-            Log.e("db: ", "added: ${dao.toString()}")
-            val all = dao.getAll()
-            for (el in all) {
-                Log.e("todo: ", "val: ${el.toString()}")
-            }
+//            val db = getDatabase(this)
+//            //Log.e("db: ", "created: ${db.toString()}")
+//            val dao = db.todoDao()
+//            val t = Todo(0, 1,0,0.0, System.currentTimeMillis(), System.currentTimeMillis(),"hello",true)
+//            dao.insert(t)
+//            Log.e("db: ", "added: ${dao.toString()}")
+//            val all = dao.getAll()
+//            for (el in all) {
+//                Log.e("todo: ", "val: ${el.toString()}")
+//            }
         }
 
     }

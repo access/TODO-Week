@@ -1,11 +1,13 @@
 package ee.taltech.todoweek.adapters
 
 import android.os.Build
+import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -47,7 +49,7 @@ class AllToDoListAdapter(var list: MutableList<Todo>, val cellClickListener: Cel
         holder.date.text = actionDate.format(dateFormat)
         holder.time.text = actionDate.format(timeFormat)
         holder.priorityProgress.progress = list[position].priority.toInt()
-
+        holder.message.movementMethod = ScrollingMovementMethod()
 
         val category = TodoDatabase.getDatabase(holder.itemView.context).todoCategoryDao().loadCategoryById(list[position].cid)
         if (category.size > 0) {
@@ -58,7 +60,7 @@ class AllToDoListAdapter(var list: MutableList<Todo>, val cellClickListener: Cel
         holder.message.text = list[position].message
 
         holder.itemView.setOnClickListener {
-            holder.todoId=list[position].id // id of Todo, what need to open on click
+            holder.todoId = list[position].id // id of Todo, what need to open on click
             cellClickListener.onCellClickListener(position, holder)
         }
 
@@ -66,15 +68,17 @@ class AllToDoListAdapter(var list: MutableList<Todo>, val cellClickListener: Cel
             val dt = holder.itemView.context.getString(R.string.delete)
 
             MaterialAlertDialogBuilder(holder.itemView.context).setTitle("$dt").setMessage(R.string.todo_delete_confirm).setNeutralButton(R.string.cancel) { dialog, which ->
-                    // Respond to neutral button press
-                }.setPositiveButton(R.string.delete) { dialog, which ->
-                    // Respond to positive button press
-                    db.todoDao().delete(list[position])
-                    list.removeAt(position)
-                    notifyItemRemoved(position)
-                    notifyDataSetChanged()
-                    Log.e("deleteTodo: ", "deleted: $list[position]")
-                }.show()
+                // Respond to neutral button press
+            }.setPositiveButton(R.string.delete) { dialog, which ->
+                // Respond to positive button press
+                db.todoDao().delete(list[position])
+                list.removeAt(position)
+                notifyItemRemoved(position)
+                notifyDataSetChanged()
+                Toast.makeText(holder.itemView.context, holder.itemView.context.resources.getString(R.string.todo_item_deleted), Toast.LENGTH_LONG).show()
+
+                Log.e("deleteTodo: ", "deleted: $list[position]")
+            }.show()
 
             db.todoDao().delete(list[position])
         }

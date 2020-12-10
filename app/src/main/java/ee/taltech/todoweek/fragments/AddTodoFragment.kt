@@ -11,7 +11,10 @@ import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.slider.Slider
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -23,15 +26,20 @@ import ee.taltech.todoweek.database.weekTaskList.Todo
 import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
 import kotlinx.android.synthetic.main.add_todo.*
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.HashMap
 
 
 class AddTodoFragment : Fragment() {
-    lateinit var userDB: UsersDB
-    lateinit var currentUser: UserModel
-    lateinit var settingsDB: SettingsDBHelper
+    private lateinit var userDB: UsersDB
+    private lateinit var currentUser: UserModel
+    private lateinit var settingsDB: SettingsDBHelper
+    private var currentToDo: Todo? = null
 
 
     override fun onCreateView(
@@ -60,22 +68,41 @@ class AddTodoFragment : Fragment() {
 
         if (arguments != null) {
             val user = arguments?.get("user")!! as UserModel
-            val todo = arguments?.get("todo")!! as Todo
+            val todo = if (arguments!!.get("todo") == null) null else arguments?.get("todo")!! as Todo
             if (user != null) {
                 currentUser = user
                 // check if edit existing todo
                 if (todo != null) {
-                    topBar.title = "${user.username} ${resources.getString(R.string.todo_edit_todo)}"
+                    currentToDo = todo
+                    topBar.title = "${user.username} | ${resources.getString(R.string.todo_edit_todo)}"
                     // fill data to controls
-                    val categoryControl = view.findViewById<TextInputLayout>()
+                    val categoryControl = view.findViewById<TextInputLayout>(R.id.categoryLayout) // category
+                    val btnTime = view.findViewById<MaterialButton>(R.id.btn_time)
+                    val btnDate = view.findViewById<MaterialButton>(R.id.btn_date)
+                    val sliderPriority = view.findViewById<Slider>(R.id.sliderPriority)
+                    val message = view.findViewById<TextInputEditText>(R.id.txt_msg)
+                    // ------------------------
+                    val category = TodoDatabase.getDatabase(requireContext()).todoCategoryDao().loadCategoryById(todo.cid)
+                    // category fill
+                    if (category.size > 0) categoryControl.hint = category.elementAt(0).name
+                    else categoryControl.hint = ""
+                    // date fill
+                    val dateFormat = DateTimeFormatter.ofPattern("MMM dd, yyyy")
+                    val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
+                    val actionDate: LocalDateTime = Instant.ofEpochMilli(todo.actionDate).atZone(ZoneId.systemDefault()).toLocalDateTime()
+                    btnTime.text = actionDate.format(timeFormat)
+                    btnDate.text = actionDate.format(dateFormat)
+                    // slider fill
+                    sliderPriority.value = todo.priority.toFloat()
+                    // message fill
+                    message.setText(todo.message)
 
-                }else{
+                } else {
                     topBar.title = "${user.username} ${resources.getString(R.string.todo_addtodo)}"
 
                 }
 
                 // time listener
-
                 btn_time.setOnClickListener {
                     val timePicker = MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).build()
                     timePicker.show(requireActivity().supportFragmentManager, "time_tag")
@@ -84,6 +111,14 @@ class AddTodoFragment : Fragment() {
                         timePickerMinute = timePicker.minute
                         val times = (if (timePickerHour == 0) "00" else timePickerHour.toString()) + ":" + (if (timePickerMinute == 0) "00" else timePickerMinute.toString())
                         btn_time.text = times
+                        // set time from current Todo
+                        if (currentToDo != null) {
+                            val selectedDate = Instant.ofEpochMilli(currentToDo!!.actionDate).atZone(ZoneOffset.UTC).toLocalDateTime()
+                            val newActionDate = selectedDate.withHour(timePickerHour).withMinute(timePickerMinute)
+                            val newInMillis: Long = (newActionDate.toEpochSecond(ZoneOffset.UTC) * 1000)
+                            //actionDate = newInMillis
+                            currentToDo!!.actionDate = newInMillis
+                        }
                     }
                 }
                 // date listener
@@ -94,6 +129,7 @@ class AddTodoFragment : Fragment() {
                     datePicker.addOnPositiveButtonClickListener {
                         // Log.e("date: ", datePicker.headerText)
                         btn_date.text = datePicker.headerText
+
 
                         val vals = datePicker.headerText.replace(",", "").split(" ") // Dec 12, 2020 -> Dec[0] 12[1] 2020[2]
                         val monthNames: MutableMap<String, Int> = HashMap()
@@ -115,6 +151,17 @@ class AddTodoFragment : Fragment() {
                             val date: Date = sf.parse(parseDate)
                             actionDate = date.time
 
+
+                            // set date from current Todo
+                            if (currentToDo != null) {
+                                var selectedDate = Instant.ofEpochMilli(actionDate).atZone(ZoneOffset.UTC).toLocalDateTime()
+                                val newActionDate =
+                                    Instant.ofEpochMilli(currentToDo!!.actionDate).atZone(ZoneOffset.UTC).toLocalDateTime().withYear(year).withMonth(month).withDayOfMonth(day)
+                                val newInMillis: Long = (newActionDate.toEpochSecond(ZoneOffset.UTC) * 1000)
+                                currentToDo!!.actionDate = newInMillis
+                            }
+
+
 //                        sf.calendar.time.hours = Log.e("date_val: ", sf.calendar.time.toInstant().toEpochMilli().toString())
 //                        actionDate =  LocalDate.parse(parseDate, formatter).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 //                        Log.e("LocalDate: ", actionDate.toString())
@@ -133,14 +180,18 @@ class AddTodoFragment : Fragment() {
         // SAVE todo
         btn_save_todo.setOnClickListener {
             todoMessage = txt_msg.text.toString()
+            if (currentToDo != null) {
+                currentToDo!!.message = todoMessage
+            }
             val newTodo = Todo(0, currentUser.uid, categoryId.toLong(), todoPriority, System.currentTimeMillis(), actionDate, todoMessage)
-            if (year > 0 && month > 0 && day > 0 && timePickerHour >= 0 && timePickerMinute >= 0 && categoryId >= 0 && todoPriority >= 0 && todoMessage.isNotEmpty()) {
+            if (year > 0 && month > 0 && day > 0 && timePickerHour >= 0 && timePickerMinute >= 0 && categoryId >= 0 && todoPriority >= 0 && todoMessage.isNotEmpty() || currentToDo != null) {
                 // OK! All fields complete
                 // save ToDo
                 val db = TodoDatabase.getDatabase(requireContext())
                 //Log.e("db: ", "created: ${db.toString()}")
                 val dao = db.todoDao()
-                dao.insert(newTodo)
+                if (currentToDo != null) dao.update(currentToDo!!)
+                else dao.insert(newTodo)
                 gotoWeekTasks(currentUser)
                 Toast.makeText(context, getResources().getString(R.string.todo_save_complete), Toast.LENGTH_LONG).show()
             } else {
@@ -166,17 +217,21 @@ class AddTodoFragment : Fragment() {
         categoryListInput.setOnItemClickListener { parent, view, position, id ->
 
             Log.e("catId: ", "id:$id position:$position text:${categoryListInput.text}")
-            var cid = -1;
-            val selectedCategory = categoryListInput.text.toString()
+            var cid = -1
+            val selectedCategoryName = categoryListInput.text.toString()
             for ((index, category) in categoryList.withIndex()) {
-                if (selectedCategory == category.name) {
+                if (selectedCategoryName == category.name) {
                     categoryId = category.id
+                    currentToDo?.cid = categoryId.toLong()
                 }
             }
         }
 
         sliderPriority.addOnChangeListener { slider, value, fromUser ->
             todoPriority = value.toDouble()
+            if (currentToDo != null) {
+                currentToDo!!.priority = todoPriority
+            }
         }
     }
 

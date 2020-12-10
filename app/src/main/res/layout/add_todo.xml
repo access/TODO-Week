@@ -59,6 +59,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:id="@+id/categoryLayout"
                         android:layout_width="210dp"
                         android:layout_height="70dp"
                         android:layout_gravity="center_vertical"
@@ -101,7 +102,7 @@
                     android:orientation="horizontal"
                     android:padding="5dp">
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_time"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                         android:layout_width="150dp"
@@ -112,7 +113,7 @@
                         android:text="@string/todo_select_time"
                         app:icon="@drawable/ic_time" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_date"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                         android:layout_width="150dp"

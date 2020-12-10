@@ -9,12 +9,12 @@ import kotlinx.android.parcel.Parcelize
 data class Todo(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "uid") val uid: Long = -1,
-    @ColumnInfo(name = "cid") val cid: Long = -1,
-    @ColumnInfo(name = "priority") val priority: Double = -1.0,
+    @ColumnInfo(name = "cid") var cid: Long = -1,
+    @ColumnInfo(name = "priority") var priority: Double = -1.0,
     @ColumnInfo(name = "createDate") val createDate: Long = -1,
-    @ColumnInfo(name = "actionDate") val actionDate: Long = -1,
-    @ColumnInfo(name = "text") val message: String,
-    @ColumnInfo(name = "done") val done: Boolean = false
+    @ColumnInfo(name = "actionDate") var actionDate: Long = -1,
+    @ColumnInfo(name = "text") var message: String,
+    @ColumnInfo(name = "done") var done: Boolean = false
 ) : Parcelable {
     override fun toString(): String {
         return "id:$id uid:$uid cid:$cid priority:$priority createDate:$createDate actionDate:$actionDate message:$message done:$done"
