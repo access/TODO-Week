@@ -8,6 +8,9 @@ interface TodoCategoryDao {
     @Query("SELECT * FROM todo_category WHERE uid=:uid")
     fun loadCategories(uid: Long): List<TodoCategory>
 
+    @Query("SELECT * FROM todo_category WHERE id=:categoryId")
+    fun loadCategoryById(categoryId: Long): List<TodoCategory>
+
     @Insert
     fun addCategory(category: TodoCategory)
 

@@ -46,7 +46,7 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -86,7 +86,21 @@
 
             </LinearLayout>
         </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity=""
+        android:orientation="vertical">
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete_todo"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:layout_gravity="center"
+            android:text="@string/delete" />
+    </LinearLayout>
     </LinearLayout>
 
 

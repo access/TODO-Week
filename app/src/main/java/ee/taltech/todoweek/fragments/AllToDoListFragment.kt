@@ -2,6 +2,7 @@ package ee.taltech.todoweek.fragments
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +12,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.MaterialToolbar
 import ee.taltech.todoweek.R
+import ee.taltech.todoweek.adapters.AllToDoListAdapter
+import ee.taltech.todoweek.adapters.ToDoViewHolder
 import ee.taltech.todoweek.database.settings.SettingsDBHelper
 import ee.taltech.todoweek.database.user.UserModel
 import ee.taltech.todoweek.database.user.UsersDB
+import ee.taltech.todoweek.database.weekTaskList.Todo
 import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
-import ee.taltech.todoweek.model.AllToDoListAdapter
-import ee.taltech.todoweek.model.WeekDay
-import ee.taltech.todoweek.model.WeekListAdapter
+import ee.taltech.todoweek.model.*
 import kotlinx.android.synthetic.main.add_todo.*
 import kotlinx.android.synthetic.main.weeklist_fragment.*
 import java.time.Instant
@@ -25,7 +27,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 
-class AllToDoListFragment : Fragment() {
+class AllToDoListFragment : Fragment(), CellClickListener {
     lateinit var userDB: UsersDB
     lateinit var currentUser: UserModel
     lateinit var settingsDB: SettingsDBHelper
@@ -47,8 +49,12 @@ class AllToDoListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (arguments != null) {
             val user = arguments?.get("user")!! as UserModel
-            currentUser=user
+            currentUser = user
             if (user.uid >= 0) { //correct user
+                val navBar = view.findViewById<MaterialToolbar>(R.id.navBar)
+                navBar.title = "${user.username} | ${resources.getString(R.string.todo_weekday_show_all)}"
+
+
                 val dao = db.todoDao()
                 // draw recyclerview as fill list by days from today to 7 days forward
                 // init today point
@@ -63,13 +69,13 @@ class AllToDoListFragment : Fragment() {
 //                }
 
                 val allTodo = dao.getAll().toMutableList()
-                for(todo in allTodo){
+                for (todo in allTodo) {
                     weekDayList.add(WeekDay(todo.actionDate, currentUser.uid, requireContext()))
                 }
-
+                val thisContext = this
                 recycler_week_tasks.apply {
                     setHasFixedSize(true)
-                    adapter = AllToDoListAdapter(allTodo )
+                    adapter = AllToDoListAdapter(allTodo, thisContext)
                     layoutManager = LinearLayoutManager(requireContext())
                     addItemDecoration(
                         DividerItemDecoration(
@@ -84,7 +90,7 @@ class AllToDoListFragment : Fragment() {
                 gotoAddTodo(user)
             }
 
-            view.findViewById<MaterialToolbar>(R.id.topBar).title = "${user.username} ${getResources().getString(R.string.week_tasks)}"
+//            view.findViewById<MaterialToolbar>(R.id.topBar).title = "${user.username} ${getResources().getString(R.string.week_tasks)}"
         }
 
         btn_cancel.setOnClickListener {
@@ -101,12 +107,28 @@ class AllToDoListFragment : Fragment() {
         navigateTo(nextFragment, true)
     }
 
+    private fun gotoEditTodo(user: UserModel, todo: Todo) {
+        val nextFragment = AddTodoFragment()
+        val bundle = Bundle()
+        bundle.putParcelable("user", user)
+        bundle.putParcelable("todo", todo)
+        nextFragment.arguments = bundle
+        navigateTo(nextFragment, true)
+    }
+
     private fun navigateTo(fragment: Fragment, addToBackstack: Boolean) {
         val transaction = fragmentManager?.beginTransaction()?.replace(R.id.container, fragment)
         if (addToBackstack) {
             transaction?.addToBackStack(null)
         }
         transaction?.commit()
+    }
+
+    override fun onCellClickListener(position: Int, toDoViewHolder: Any) {
+        val holder = toDoViewHolder as ToDoViewHolder
+        val reqTodo = db.todoDao().loadSingleById(holder.todoId)
+        Log.e("todo: ", reqTodo.toString())
+        gotoEditTodo(currentUser, reqTodo)
     }
 
 }

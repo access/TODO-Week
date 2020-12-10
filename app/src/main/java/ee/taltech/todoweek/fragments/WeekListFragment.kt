@@ -17,7 +17,7 @@ import ee.taltech.todoweek.database.user.UserModel
 import ee.taltech.todoweek.database.user.UsersDB
 import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
 import ee.taltech.todoweek.model.WeekDay
-import ee.taltech.todoweek.model.WeekListAdapter
+import ee.taltech.todoweek.adapters.WeekListAdapter
 import kotlinx.android.synthetic.main.weeklist_fragment.*
 import java.time.Instant
 import java.time.LocalDate

@@ -1,33 +1,25 @@
 package ee.taltech.todoweek.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ee.taltech.todoweek.R
 import ee.taltech.todoweek.database.settings.SettingsDBHelper
 import ee.taltech.todoweek.database.user.UserModel
 import ee.taltech.todoweek.database.user.UsersDB
-import ee.taltech.todoweek.database.weekTaskList.TodoCategory
 import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
-import ee.taltech.todoweek.model.CategoriesAdapter
-import ee.taltech.todoweek.model.CellClickListener
-import kotlinx.android.synthetic.main.add_todo.*
+import ee.taltech.todoweek.adapters.CategoriesAdapter
 import kotlinx.android.synthetic.main.add_todo.topBar
 import kotlinx.android.synthetic.main.categories_fragment.*
-import kotlinx.android.synthetic.main.categories_fragment.view.*
 
 
-class CategoriesFragment : CellClickListener, Fragment() {
+class CategoriesFragment : Fragment() {
     lateinit var userDB: UsersDB
     lateinit var currentUser: UserModel
     lateinit var settingsDB: SettingsDBHelper
@@ -67,7 +59,7 @@ class CategoriesFragment : CellClickListener, Fragment() {
 
         recyclerView.apply {
             setHasFixedSize(true)
-            adapter = CategoriesAdapter(cats, tmpContext)
+            adapter = CategoriesAdapter(cats)
             layoutManager = LinearLayoutManager(this.context)
             addItemDecoration(
                 DividerItemDecoration(
@@ -137,9 +129,5 @@ class CategoriesFragment : CellClickListener, Fragment() {
             transaction?.addToBackStack(null)
         }
         transaction?.commit()
-    }
-
-    override fun onCellClickListener(position: Int, category: TodoCategory) {
-        //
     }
 }

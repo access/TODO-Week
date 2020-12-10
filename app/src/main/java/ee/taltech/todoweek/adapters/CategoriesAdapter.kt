@@ -1,4 +1,4 @@
-package ee.taltech.todoweek.model
+package ee.taltech.todoweek.adapters
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,8 +13,7 @@ import ee.taltech.todoweek.database.weekTaskList.TodoCategory
 import ee.taltech.todoweek.database.weekTaskList.TodoDatabase
 import kotlinx.android.synthetic.main.item_category_layout.view.*
 
-class CategoriesAdapter(var list: MutableList<TodoCategory>, private val cellClickListener: CellClickListener) :
-    RecyclerView.Adapter<CategoryViewHolder>() {
+class CategoriesAdapter(var list: MutableList<TodoCategory>) : RecyclerView.Adapter<CategoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(
@@ -29,7 +28,7 @@ class CategoriesAdapter(var list: MutableList<TodoCategory>, private val cellCli
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val category = list[position]
-        holder.id.text = "${position+1}" //"${category.id}"
+        holder.id.text = "${position + 1}" //"${category.id}"
         holder.name.text = "${category.name}"
 
 //        holder.btn_delete.setTag(0, category)

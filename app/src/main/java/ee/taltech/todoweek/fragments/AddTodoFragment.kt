@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import ee.taltech.todoweek.R
@@ -59,58 +60,70 @@ class AddTodoFragment : Fragment() {
 
         if (arguments != null) {
             val user = arguments?.get("user")!! as UserModel
-            currentUser = user
-            topBar.title = "${user.username} ${resources.getString(R.string.todo_addtodo)}"
-            // time listener
+            val todo = arguments?.get("todo")!! as Todo
+            if (user != null) {
+                currentUser = user
+                // check if edit existing todo
+                if (todo != null) {
+                    topBar.title = "${user.username} ${resources.getString(R.string.todo_edit_todo)}"
+                    // fill data to controls
+                    val categoryControl = view.findViewById<TextInputLayout>()
 
-            btn_time.setOnClickListener {
-                val timePicker = MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).build()
-                timePicker.show(requireActivity().supportFragmentManager, "time_tag")
-                timePicker.addOnPositiveButtonClickListener {
-                    timePickerHour = timePicker.hour
-                    timePickerMinute = timePicker.minute
-                    val times =
-                        (if (timePickerHour == 0) "00" else timePickerHour.toString()) + ":" + (if (timePickerMinute == 0) "00" else timePickerMinute.toString())
-                    btn_time.text = times
+                }else{
+                    topBar.title = "${user.username} ${resources.getString(R.string.todo_addtodo)}"
+
                 }
-            }
-            // date listener
-            btn_date.setOnClickListener {
-                val builder: MaterialDatePicker.Builder<*> = MaterialDatePicker.Builder.datePicker()
-                val datePicker: MaterialDatePicker<*> = builder.build()
-                datePicker.show(requireActivity().supportFragmentManager, datePicker.toString())
-                datePicker.addOnPositiveButtonClickListener {
-                    // Log.e("date: ", datePicker.headerText)
-                    btn_date.text = datePicker.headerText
 
-                    val vals = datePicker.headerText.replace(",", "").split(" ") // Dec 12, 2020 -> Dec[0] 12[1] 2020[2]
-                    val monthNames: MutableMap<String, Int> = HashMap()
-                    monthNames["Jan"] = 1; monthNames["Feb"] = 2; monthNames["Mar"] = 3; monthNames["Apr"] = 4
-                    monthNames["May"] = 5; monthNames["Jun"] = 6; monthNames["Jul"] = 7; monthNames["Aug"] = 8
-                    monthNames["Sep"] = 9;
-                    monthNames["Sept"] = 9; monthNames["Oct"] = 10; monthNames["Nov"] = 11; monthNames["Dec"] = 12
-                    val curMonthNum = monthNames[vals[0]]
-                    month = curMonthNum!!
-                    year = vals[2].toInt()
-                    day = vals[1].toInt()
+                // time listener
 
-                    val parseDate = "$curMonthNum/${vals[1]}/${vals[2]} $timePickerHour:$timePickerMinute"
-                    //                   Log.e("parseDate: ", parseDate)
-                    if (year > 0 && month > 0 && day > 0) {
-                        var formatter = DateTimeFormatter.ofPattern("M/d/y H:m")
-                        val sf = SimpleDateFormat("M/d/y H:m")
-                        sf.parse(parseDate)
-                        val date: Date = sf.parse(parseDate)
-                        actionDate = date.time
+                btn_time.setOnClickListener {
+                    val timePicker = MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).build()
+                    timePicker.show(requireActivity().supportFragmentManager, "time_tag")
+                    timePicker.addOnPositiveButtonClickListener {
+                        timePickerHour = timePicker.hour
+                        timePickerMinute = timePicker.minute
+                        val times = (if (timePickerHour == 0) "00" else timePickerHour.toString()) + ":" + (if (timePickerMinute == 0) "00" else timePickerMinute.toString())
+                        btn_time.text = times
+                    }
+                }
+                // date listener
+                btn_date.setOnClickListener {
+                    val builder: MaterialDatePicker.Builder<*> = MaterialDatePicker.Builder.datePicker()
+                    val datePicker: MaterialDatePicker<*> = builder.build()
+                    datePicker.show(requireActivity().supportFragmentManager, datePicker.toString())
+                    datePicker.addOnPositiveButtonClickListener {
+                        // Log.e("date: ", datePicker.headerText)
+                        btn_date.text = datePicker.headerText
+
+                        val vals = datePicker.headerText.replace(",", "").split(" ") // Dec 12, 2020 -> Dec[0] 12[1] 2020[2]
+                        val monthNames: MutableMap<String, Int> = HashMap()
+                        monthNames["Jan"] = 1; monthNames["Feb"] = 2; monthNames["Mar"] = 3; monthNames["Apr"] = 4
+                        monthNames["May"] = 5; monthNames["Jun"] = 6; monthNames["Jul"] = 7; monthNames["Aug"] = 8
+                        monthNames["Sep"] = 9;
+                        monthNames["Sept"] = 9; monthNames["Oct"] = 10; monthNames["Nov"] = 11; monthNames["Dec"] = 12
+                        val curMonthNum = monthNames[vals[0]]
+                        month = curMonthNum!!
+                        year = vals[2].toInt()
+                        day = vals[1].toInt()
+
+                        val parseDate = "$curMonthNum/${vals[1]}/${vals[2]} $timePickerHour:$timePickerMinute"
+                        //                   Log.e("parseDate: ", parseDate)
+                        if (year > 0 && month > 0 && day > 0) {
+                            var formatter = DateTimeFormatter.ofPattern("M/d/y H:m")
+                            val sf = SimpleDateFormat("M/d/y H:m")
+                            sf.parse(parseDate)
+                            val date: Date = sf.parse(parseDate)
+                            actionDate = date.time
 
 //                        sf.calendar.time.hours = Log.e("date_val: ", sf.calendar.time.toInstant().toEpochMilli().toString())
 //                        actionDate =  LocalDate.parse(parseDate, formatter).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 //                        Log.e("LocalDate: ", actionDate.toString())
 
+                        }
+
                     }
 
                 }
-
             }
         }
         btn_cancel.setOnClickListener {
@@ -119,7 +132,7 @@ class AddTodoFragment : Fragment() {
 
         // SAVE todo
         btn_save_todo.setOnClickListener {
-            todoMessage=txt_msg.text.toString()
+            todoMessage = txt_msg.text.toString()
             val newTodo = Todo(0, currentUser.uid, categoryId.toLong(), todoPriority, System.currentTimeMillis(), actionDate, todoMessage)
             if (year > 0 && month > 0 && day > 0 && timePickerHour >= 0 && timePickerMinute >= 0 && categoryId >= 0 && todoPriority >= 0 && todoMessage.isNotEmpty()) {
                 // OK! All fields complete

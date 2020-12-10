@@ -1,4 +1,4 @@
-package ee.taltech.todoweek.model
+package ee.taltech.todoweek.adapters
 
 import android.os.Build
 import android.view.LayoutInflater
@@ -14,6 +14,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import android.util.Log
+import ee.taltech.todoweek.model.WeekDay
 
 class WeekListAdapter(var list: MutableList<WeekDay>) : RecyclerView.Adapter<WeekDayViewHolder>() {
 

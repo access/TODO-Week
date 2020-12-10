@@ -64,7 +64,7 @@ class CreateUserFragment : Fragment(), NavigationHost {
 
         view.findViewById<MaterialButton>(R.id.cancel_button).setOnClickListener {
             for (x in userDB.readAllUsers()) {
-                userDB.deleteUser(x.uid.toString())
+                //userDB.deleteUser(x.uid.toString())
                 Log.e("deleted user: ", x.toString())
             }
             navigateTo(AuthFragment(), true)
